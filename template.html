@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang='en'>
+	<head>
+		<title>Chat</title>
+		<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js'></script>
+
+		<script src='/socket.io/socket.io.js'></script>
+		<script>
+				var socket = io.connect();
+
+				socket.on('welcome', function(data) {
+					$('#log ul').append('<li>' + data.salutation + '</li>');
+				});
+				
+				socket.on('data from server', function(data) {
+					$('#log ul').append('<li>' + data.message + '</li>');
+				});
+	
+
+				$(function() {
+					var entry_el = $('#entry');
+					$('#entry').keypress(function(event) {
+						if(event.keyCode == 13) {
+							var msg = entry_el.attr('value');
+							if(msg) {
+								socket.emit('data from client', {'text': msg});
+								entry_el.attr('value', '');
+								window.scrollBy(0, 1000000000000);
+								entry_el.focus();
+							}
+						}
+					});
+				});
+			/*
+				*/
+		</script>
+
+		<style type='text/css'>
+			body {
+				background-color: #666;
+				color: fff;
+				font-size: 14px;
+				margin: 0;
+				padding: 0;
+				font-family: Helvetica, Arial, Sans-Serif;
+			}
+			#log {
+				margin-bottom: 100px;
+				width: 100%;
+			}
+			#log ul {
+				padding: 0;
+				margin: 0;
+			}
+			#log ul li {
+				list-style-type: none;
+			}
+			#console {
+				background-color: black;
+				color: white;
+				border-top:1px solid white;
+				position: fixed;
+				bottom: 0;
+				width: 100%;
+				font-size: 18px;
+			}
+			#console input {
+				width: 100%;
+				background-color: inherit;
+				color: inherit;
+				font-size: inherit;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Chat</h1>
+		<div id='log'><ul></ul></div>
+		<div id='console'>
+			<input type='text' id='entry'/>
+		</div>
+	</body>
+</html>
